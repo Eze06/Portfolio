@@ -1,0 +1,258 @@
+@font-face {
+    font-family: "MonumentExtendedRegular";
+    src: url("../fonts/MonumentExtended-Regular.otf") format('opentype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "MonumentExtendedBold";
+    src: url("../fonts/MonumentExtended-Ultrabold.otf") format('opentype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --font-title: "MonumentExtendedBold", system-ui, sans-serif;
+    --font-body: "MonumentExtendedRegular", system-ui, sans-serif;
+}
+
+html, body
+{
+    height: 100%;
+    margin:0;
+    font-family: var(--font-body);
+}
+
+body
+{
+    height:100%;
+
+    overflow: auto;   
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}   
+
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.background
+{
+    height: 100%;
+    position:relative;
+    background: radial-gradient(1200px 800px at 20% 10%, #13171d 0%, #0b1016 55%, #13171d 100%);
+}
+
+
+
+#title
+{
+
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    display:flex;
+    flex-direction: column;
+    height:100%;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.title-text
+{
+    display:flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: #FAF6F6;
+    transform: rotateZ(-2.5deg);
+}
+
+.title-name
+{
+    font-size: 8vw;
+    text-align: left;
+    margin: 0;
+    line-height: 0.6;
+    font-family: var(--font-title);
+}
+
+.title-profession
+{
+    font-size: 0.6vw;
+    line-height: 1;
+    text-align: left;
+}
+
+.vinyl-page
+{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    perspective: 1400px;
+    perspective-origin: 50% 50%;
+}
+
+.vinyl
+{
+    transform: rotateZ(-5.0deg);
+    width: 50vh;
+    height: 50vh;
+    display:flex;
+    transform-style: preserve-3d;
+}
+
+.vinyl-front
+{
+    position:absolute;
+    transform-origin: 0% 50%;
+    height: 100%;
+    width: 100%;
+    transform-style: preserve-3d;
+
+}
+
+.vinyl-back {
+    position: absolute;
+    transform-origin: 100% 50%;
+    height: 100%;
+    width: 100%;
+    transform-style: preserve-3d;
+    z-index: -1;
+}
+
+.vinyl-front-cover, .vinyl-front-back, .vinyl-back-cover, .vinyl-back-back
+{
+
+    position:absolute;
+    inset: 0;
+    width:100%;
+    height:100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;    
+    border: 2.5px solid rgb(145, 145, 145);
+}
+
+.vinyl-front-back
+{
+    transform:rotateY(180deg);
+    background-color:#2f3033;
+    border: 2.5px solid rgb(145, 145, 145);
+    border-right: none;
+}
+
+.vinyl-back-back
+{
+    transform: rotateY(180deg);
+    background-color: #2f3033;
+    border: 2.5px solid rgb(145, 145, 145);
+}
+
+.vinyl-front-cover img, .vinyl-front-back img, .vinyl-back-cover img, .vinyl-back-back img
+{
+    object-fit: cover;
+    height:100%;
+    width:100%;
+    display:block;
+}
+
+.vinyl-front-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    mix-blend-mode: multiply;
+    z-index: 2;
+
+    background:
+        linear-gradient(to right,
+            rgba(0, 0, 0, 0.55),
+            rgba(255, 255, 255, 0.10),
+            rgba(0, 0, 0, 0.35)) left/12px 100% no-repeat,
+
+        linear-gradient(to top,
+            rgba(0, 0, 0, 0.45),
+            rgba(255, 255, 255, 0.06),
+            rgba(0, 0, 0, 0.30)) bottom/100% 12px no-repeat;
+}
+
+.vinyl-front.is-flipping .vinyl-front-cover::after {
+    opacity: 1;
+}
+
+/* vinyl cover overlays */
+.vinyl-cover-overlays
+{
+    position:absolute;
+    inset:0;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.vinyl-cover-overlays::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("../img/vinyl/scratch-overlay.png") center/cover no-repeat;
+    opacity: 0.35;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    
+}
+
+.vinyl-cover-overlays::after {
+    content: "";
+    position: absolute;
+    inset: 0%;
+    
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, 0.35) 0%,
+            rgba(255, 255, 255, 0.12) 18%,
+            rgba(255, 255, 255, 0.00) 45%,
+            rgba(255, 255, 255, 0.10) 70%,
+            rgba(255, 255, 255, 0.00) 100%);
+            
+    opacity: 0.65;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    z-index: 4;
+}
+
+.vinyl-front-cover
+{
+    z-index: 1;
+}
+
+.vinyl:hover
+{
+    cursor:pointer;
+}
+
+.vinyl-center
+{
+    position:absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #2f3033;
+    z-index:-2;
+    border: 2.5px solid rgb(145, 145, 145);
+}
