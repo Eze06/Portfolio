@@ -2,8 +2,11 @@
 var VinylElem = document.querySelector(".vinyl");
 var VinylFrontElem = document.querySelector(".vinyl-front");
 var VinylBackElem = document.querySelector(".vinyl-back");
+var VinylCenterElem = document.querySelector(".vinyl-center");
 
 var TitleElem = document.querySelector("#title");
+
+
 
 
 function FlipVinyl() {
@@ -27,7 +30,7 @@ function FlipVinyl() {
 
     tl
         .to(VinylElem, {
-        scale: 1.02,
+        scale: 1.15,
         duration: 1,
         ease: "power2.out"
     })
@@ -48,7 +51,8 @@ function FlipVinyl() {
         duration: 1,
         ease: "power2.inOut"
 
-    }, "<0.5");
+        }, "<0.5")
+        
 }
 
 //Load Index Page
@@ -93,7 +97,6 @@ const VinylHoverTween = gsap.to(VinylElem, {
 function PlayVinylHoverTween() { VinylHoverTween.play(); };
 
 function ReverseVinylHoverTween() { VinylHoverTween.reverse(); };
-
 
 // //Add event listeners
 
