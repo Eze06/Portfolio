@@ -1,7 +1,12 @@
 import './style.css';
 import * as THREE from 'three';
+import gsap from 'gsap';
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import CircleType from "circletype";
+
+
+gsap.registerPlugin(ScrollTrigger);
 
 const VinylElem = document.querySelector(".vinyl");
 const VinylFrontElem = document.querySelector(".vinyl-front");
@@ -10,11 +15,41 @@ const VinylBackElem = document.querySelector(".vinyl-back");
 const VinylDisc = document.querySelector(".vinyl-disc");
 const VinylButtonParent = document.querySelector('.vinyl-button');
 
+const AboutHeader = document.querySelector('.about-header');
+const AboutMePage = document.querySelector('#about-me-page');
+
+const ProjectHeader = document.querySelector('.project-header');
+const ProjectPage = document.querySelector('#project-page');
+
+const ProjectScroller = document.querySelector(".project-scroller");
+const ProjectSectionImage = document.querySelectorAll(".project-section-image img");
+
+
+
+//Project Scroller Variables
+let bProjectPageOpen = false;
+let ProjectScrollCurrent = 0;
+let ProjectScrollTarget = 0;
+let ProjectScrollMax = 0;
+let ProjectScrollTween = null;
+
+
+
 const TitleElem = document.querySelector("#title");
+const NavBar = document.querySelector(".nav-bar");
+
 
 const mount = document.getElementById("webgl-bg");
 
 const VinylButtonText = document.querySelector(".vinyl-button-text");
+
+
+
+var bVinylOpenAnimPlaying = false;
+var bVinylOpened = false;
+var bHomePageShown = true;
+
+var bAnimationPlaying = false;
 
 new CircleType(VinylButtonText);
 
@@ -57,17 +92,30 @@ scene.add(rim);
 
 // Flip Vinyl 
 function FlipVinyl() {
+
+  bVinylOpenAnimPlaying = true;
+  bAnimationPlaying = true;
+
   VinylElem.removeEventListener("mouseenter", PlayVinylHoverTween);
   VinylElem.removeEventListener("mouseleave", ReverseVinylHoverTween);
+  VinylElem.removeEventListener('click', FlipVinyl);
 
+  gsap.set(VinylElem, { pointerEvents: "none" });
   gsap.to(TitleElem, { opacity: 0, duration: 0.25, overwrite: "auto" });
-  gsap.to(VinylButtonParent, { opacity: 0, duration: 0.25, overwrite: "auto" });
+  gsap.to(VinylButtonParent, { opacity: 0, zIndex: -1, duration: 0.25, overwrite: "auto" });
 
 
   const tl = gsap.timeline({
 
     defaults: { overwrite: "auto" },
+    onComplete: () =>
+    {
+      bVinylOpened = true;
+      bVinylOpenAnimPlaying = false;
+      bHomePageShown = false;
+      bAnimationPlaying = false;
 
+    }
 
   });
 
@@ -96,6 +144,111 @@ function FlipVinyl() {
 
     }, "<0.5")
 
+}
+//Function To Close Vinyl
+//Params: {ShowMainMenu -> boolean to check if show title and vinyl button}
+function CloseVinyl(ShowMainMenu = true)
+{
+  bAnimationPlaying = true;
+
+  const tl = gsap.timeline({
+
+    defaults: { overwrite: "auto" },
+    
+    onComplete: () =>
+    {
+      bAnimationPlaying = false;
+
+      VinylElem.addEventListener('mouseenter', PlayVinylHoverTween);
+      VinylElem.addEventListener('mouseleave', ReverseVinylHoverTween);
+      VinylElem.addEventListener('click', FlipVinyl);
+      
+      ReverseVinylHoverTween();
+
+      if (ShowMainMenu)
+      {
+        gsap.set(VinylElem, { pointerEvents: "all" });
+        gsap.to(TitleElem, { opacity: 1, duration: 0.25, overwrite: "auto" });
+        gsap.to(VinylButtonParent, { opacity: 1, zIndex: 0, duration: 0.25, overwrite: "auto" });
+        
+        bVinylOpened = false;
+      }
+
+    }
+
+  });
+
+  tl.to(
+    VinylBackElem,
+    {
+      rotationY: 0,
+      duration: 1,
+      ease: "power2.inOut"
+    }
+  )
+  .to(VinylFrontElem, {
+    rotationY: 0,
+    duration: 1,
+    ease: "power2.inOut"
+
+  }, "<0.5")
+    .to(VinylElem, {
+      rotationZ: -5,
+      duration:1,
+    })
+    .to(VinylElem, 
+      {
+        scale: 1,
+        duration: 1,
+        ease: "power2.out",
+    }
+  )
+
+
+  
+
+}
+
+var bOpeningHomePage = false;
+
+function OpenHomePage() {
+
+  if (bOpeningHomePage || bVinylOpenAnimPlaying || bHomePageShown || bAnimationPlaying) return;
+  bOpeningHomePage = true;
+
+  bAnimationPlaying = true;
+  console.log("Opening Home Page");
+  
+  bProjectPageOpen = false;
+  
+  if (bVinylOpened) {
+    CloseVinyl(false);
+  }
+
+  const tl = gsap.timeline({
+
+    defaults: { overwrite: "auto" },
+    onComplete: () => {
+      gsap.set(VinylElem, { pointerEvents: "all" });
+      
+      bOpeningHomePage = false
+      bAnimationPlaying = false;
+
+    }
+
+
+  });
+
+  //Close About Page
+  tl.to(AboutMePage, { opacity: 0, ease: "power2.out", duration: 1 })
+  tl.to(ProjectPage, {opacity:0, pointerEvents:'none', ease:"power2.out", duration:1}, "<")
+  //Open Home Page
+  
+
+  tl.to(VinylElem, { opacity: 1, duration: 2 })
+    .to(TitleElem, { opacity: 1, duration: 2}, '<')
+  .to(VinylButtonParent, {opacity:1, zIndex:1, duration: 2}, "<")
+  
 }
 
 //Load Index Page
@@ -134,6 +287,7 @@ function LoadIndexPage() {
       ease: "power1.in",
       opacity: 1,
       duration: LoadDuration,
+
     }
   )
 }
@@ -147,9 +301,150 @@ const VinylHoverTween = gsap.to(VinylElem, {
   overwrite: "auto"
 });
 
+
 function PlayVinylHoverTween() { VinylHoverTween.play(); };
 
 function ReverseVinylHoverTween() { VinylHoverTween.reverse(); };
+
+function OnProjectSectionImageHover(index)
+{
+
+  console.log("Hover");
+
+  gsap.to(ProjectSectionImage[index], 
+    {
+      transform: "scale(1.2)",
+      ease: "power2.out",
+      duration: 0.3,
+    }
+  )
+
+};
+
+function OnProjectSectionImageExit(index) {
+
+  console.log("HoverExit");
+
+  gsap.to(ProjectSectionImage[index],
+    {
+      transform: "scale(1)",
+      ease: "power2.out",
+      duration: 0.3,
+    }
+  )
+
+};
+
+function OpenAboutMePage()
+{
+
+  if (bAnimationPlaying) return;  
+  CloseVinyl(false);
+
+  gsap.set(VinylElem, { pointerEvents: "none" });
+  gsap.to(TitleElem, { opacity: 0, duration: 0.25, overwrite: "auto" });
+  gsap.to(VinylButtonParent, { opacity: 0, zIndex: -1, duration: 0.25, overwrite: "auto" });
+
+  bAnimationPlaying = true;
+
+  const tl = gsap.timeline({
+
+    defaults: { overwrite: "auto" },
+
+    onComplete: () => {
+      bHomePageShown = false;
+      bAnimationPlaying = false;
+    }
+
+  });
+
+  tl.to(VinylElem, { opacity: 0, pointerEvents: "none", duration: 2 });
+  tl.to(AboutMePage, { opacity: 1, duration: 2 }, "< 1");
+
+  
+}
+
+function UpdateProjectScrollBounds() {
+  ProjectScrollMax = Math.max(0, ProjectScroller.scrollWidth - window.innerWidth);
+  ProjectScrollTarget = Math.max(0, Math.min(ProjectScrollTarget, ProjectScrollMax));
+  ProjectScrollCurrent = Math.max(0, Math.min(ProjectScrollCurrent, ProjectScrollMax));
+}
+
+function ApplyProjectScroll(Force = false) {
+  if (ProjectScrollTween) ProjectScrollTween.kill();
+
+  if (Force) {
+    ProjectScrollCurrent = ProjectScrollTarget;
+    gsap.set(ProjectScroller, { x: -ProjectScrollCurrent });
+    return;
+  }
+
+  ProjectScrollTween = gsap.to(
+    { value: ProjectScrollCurrent },
+    {
+      value: ProjectScrollTarget,
+      duration: 0.75,
+      ease: "power3.out",
+      onUpdate: function () {
+        ProjectScrollCurrent = this.targets()[0].value;
+        gsap.set(ProjectScroller, { x: -ProjectScrollCurrent });
+      }
+    }
+  );
+}
+
+function HandleProjectWheel(e) {
+  if (!bProjectPageOpen) return;
+
+  e.preventDefault();
+
+  ProjectScrollTarget += e.deltaY * 1.75;
+  ProjectScrollTarget = Math.max(0, Math.min(ProjectScrollTarget, ProjectScrollMax));
+
+  ApplyProjectScroll();
+}
+
+function ResetProjectScroll() {
+  ProjectScrollCurrent = 0;
+  ProjectScrollTarget = 0;
+  UpdateProjectScrollBounds();
+  ApplyProjectScroll(true);
+}
+
+function OpenProjectPage() {
+  if (bAnimationPlaying) return;
+  CloseVinyl(false);
+
+  gsap.set(VinylElem, { pointerEvents: "none" });
+  gsap.to(TitleElem, { opacity: 0, duration: 0.25, overwrite: "auto" });
+  gsap.to(VinylButtonParent, { opacity: 0, zIndex: -1, duration: 0.25, overwrite: "auto" });
+
+  bAnimationPlaying = true;
+
+  ResetProjectScroll();
+
+  const tl = gsap.timeline({
+
+    defaults: { overwrite: "auto" },
+
+    onComplete: () => {
+
+      bHomePageShown = false;
+      bAnimationPlaying = false;
+      bProjectPageOpen = true;
+
+      gsap.set(ProjectPage, { pointerEvents: "all" });
+
+      UpdateProjectScrollBounds();
+      ApplyProjectScroll(true);
+
+    }
+
+  });
+
+  tl.to(VinylElem, { opacity: 0, pointerEvents: "none", duration: 2 });
+  tl.to(ProjectPage, { opacity: 1, duration: 1 }, ">-0.5");
+}
 
 
 // Dust particles (Points)
@@ -191,7 +486,11 @@ function resize() {
   renderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
+
+  UpdateProjectScrollBounds();
+  ApplyProjectScroll(true);
 }
+
 window.addEventListener("resize", resize);
 
 function damp(v, t, a) { return v + (t - v) * a; }
@@ -243,4 +542,26 @@ LoadIndexPage();
 VinylElem.addEventListener('click', FlipVinyl);
 VinylElem.addEventListener('mouseenter', PlayVinylHoverTween);
 VinylElem.addEventListener('mouseleave', ReverseVinylHoverTween);
+
+VinylButtonParent.addEventListener('mouseenter', PlayVinylHoverTween);
+VinylButtonParent.addEventListener('mouseleave', ReverseVinylHoverTween);
+
 VinylButtonParent.addEventListener('click', FlipVinyl);
+AboutHeader.addEventListener('click', OpenAboutMePage);
+ProjectHeader.addEventListener('click', OpenProjectPage);
+
+NavBar.addEventListener('click', OpenHomePage);
+
+ProjectPage.addEventListener('wheel', HandleProjectWheel, { passive: false });
+
+
+for (let index = 0; index < ProjectSectionImage.length; index++)
+{
+  let element = ProjectSectionImage[index];
+
+  element.addEventListener('mouseenter', () => OnProjectSectionImageHover(index));
+  element.addEventListener('mouseleave', () => OnProjectSectionImageExit(index));
+
+}
+
+OpenProjectPage();
