@@ -21,8 +21,15 @@ const AboutMePage = document.querySelector('#about-me-page');
 const ProjectHeader = document.querySelector('.project-header');
 const ProjectPage = document.querySelector('#project-page');
 
+const ProjectOverviewTexts = document.querySelectorAll(".project-overview-text");
+const ProjectTitleFront = document.querySelectorAll(".project-section-title-front");
+const ProjectTitleBack = document.querySelectorAll(".project-section-title-back");
+
+
 const ProjectScroller = document.querySelector(".project-scroller");
 const ProjectSectionImage = document.querySelectorAll(".project-section-image img");
+const ProjectSectionImageDiv = document.querySelectorAll(".project-section-image");
+
 
 
 
@@ -411,7 +418,9 @@ function ResetProjectScroll() {
   ApplyProjectScroll(true);
 }
 
-function OpenProjectPage() {
+function OpenProjectPage()
+{
+
   if (bAnimationPlaying) return;
   CloseVinyl(false);
 
@@ -444,6 +453,104 @@ function OpenProjectPage() {
 
   tl.to(VinylElem, { opacity: 0, pointerEvents: "none", duration: 2 });
   tl.to(ProjectPage, { opacity: 1, duration: 1 }, ">-0.5");
+}
+
+function OpenProject(ProjectIndex)
+{
+
+  const sections = document.querySelectorAll(".project-section");
+  const section = sections[ProjectIndex];
+
+  if (!section) return;
+
+  const sectionCenter = section.offsetLeft + section.offsetWidth / 2;
+  const viewportCenter = window.innerWidth / 2;
+
+  ProjectScrollTarget = sectionCenter - viewportCenter;
+  ProjectScrollTarget = Math.max(0, Math.min(ProjectScrollTarget, ProjectScrollMax));
+
+  ProjectSectionImage[ProjectIndex].removeEventListener('mouseleave', projectHandlers[ProjectIndex].handleProjectMouseLeave);
+  ProjectSectionImage[ProjectIndex].removeEventListener('mouseenter', projectHandlers[ProjectIndex].handleProjectMouseEnter);
+
+
+  if (ProjectScrollTween) ProjectScrollTween.kill();
+
+  ProjectScrollTween = gsap.to(
+    { value: ProjectScrollCurrent },
+    {
+      value: ProjectScrollTarget,
+      duration: 0.8,
+      ease: "power3.out",
+      onUpdate: function () {
+        ProjectScrollCurrent = this.targets()[0].value;
+        gsap.set(ProjectScroller, { x: -ProjectScrollCurrent });
+      },
+      onComplete: () => {
+        console.log("Centered, now expand here");
+      }
+    }
+  );
+
+  const tl = gsap.timeline({
+
+    defaults: { overwrite: "auto" },
+
+    onComplete: () => {
+    }
+
+  });
+
+  tl.to(
+    ProjectSectionImage[ProjectIndex],
+    {
+      cursor: "default", 
+      scale: 1,
+      duration: 0.3,
+    }
+  )  
+  tl.to(
+    ProjectOverviewTexts[ProjectIndex],
+    {
+      opacity: 0,
+      duration: 0.3,
+      ease: "power3.out",
+
+    }
+  )
+  tl.to(
+    ProjectTitleFront[ProjectIndex],
+    {
+      opacity: 0,
+      duration: 0.3,
+      ease: "power3.out",
+    }
+    ,
+    "<"
+  )
+  tl.to(
+    ProjectTitleBack[ProjectIndex],
+    {
+      opacity: 0,
+      duration: 0.3,
+      ease: "power3.out",
+
+    }
+    ,
+    "<"
+  )
+  tl.to(
+    ProjectSectionImageDiv[ProjectIndex],
+    {
+      zIndex: 3,
+      position: "absolute",
+      width: "100vw",
+      height: "100vh",
+      flexBasis: "100vw",
+      duration: 0.5,
+      ease: "power2.out"
+    }
+  )
+  
 }
 
 
@@ -554,14 +661,25 @@ NavBar.addEventListener('click', OpenHomePage);
 
 ProjectPage.addEventListener('wheel', HandleProjectWheel, { passive: false });
 
+const projectHandlers = [];
 
-for (let index = 0; index < ProjectSectionImage.length; index++)
-{
-  let element = ProjectSectionImage[index];
+ProjectSectionImage.forEach((element, index) => {
+  const handleProjectMouseEnter = () => OnProjectSectionImageHover(index);
+  const handleProjectMouseLeave = () => OnProjectSectionImageExit(index);
+  const handleProjectMouseClick = () => OpenProject(index);
 
-  element.addEventListener('mouseenter', () => OnProjectSectionImageHover(index));
-  element.addEventListener('mouseleave', () => OnProjectSectionImageExit(index));
+  element.addEventListener('mouseenter', handleProjectMouseEnter);
+  element.addEventListener('mouseleave', handleProjectMouseLeave);
 
-}
+  element.addEventListener('click', handleProjectMouseClick);
+
+  projectHandlers[index] = {
+    handleProjectMouseEnter,
+    handleProjectMouseLeave,
+    handleProjectMouseClick
+  };
+
+});
+
 
 OpenProjectPage();
