@@ -681,5 +681,3 @@ ProjectSectionImage.forEach((element, index) => {
 
 });
 
-
-OpenProjectPage();
