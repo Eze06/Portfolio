@@ -30,7 +30,7 @@ const ProjectScroller = document.querySelector(".project-scroller");
 const ProjectSectionImage = document.querySelectorAll(".project-section-image img");
 const ProjectSectionImageDiv = document.querySelectorAll(".project-section-image");
 
-
+const ProjectNames = ["cardiva", "engarde", "konranbou", "xpofolio", "verdant"];
 
 
 //Project Scroller Variables
@@ -486,16 +486,19 @@ function OpenProject(ProjectIndex)
         gsap.set(ProjectScroller, { x: -ProjectScrollCurrent });
       },
       onComplete: () => {
-        console.log("Centered, now expand here");
+        console.log("Centered");
       }
     }
   );
+
+  let ProjectName = ProjectNames[ProjectIndex];
 
   const tl = gsap.timeline({
 
     defaults: { overwrite: "auto" },
 
     onComplete: () => {
+      window.location.href = `projects/${ProjectName}.html`;
     }
 
   });
