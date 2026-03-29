@@ -30,7 +30,7 @@ const ProjectScroller = document.querySelector(".project-scroller");
 const ProjectSectionImage = document.querySelectorAll(".project-section-image img");
 const ProjectSectionImageDiv = document.querySelectorAll(".project-section-image");
 
-const ProjectNames = ["cardiva", "engarde", "konranbou", "xpofolio", "verdant"];
+const ProjectNames = ["cardiva", "engarde", "konranbou", "xpofolio", "verdant", "pryze", "requiem", "solar-system"];
 
 
 //Project Scroller Variables

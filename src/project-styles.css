@@ -126,6 +126,7 @@ body::-webkit-scrollbar {
     font-family: "MonumentExtendedBold";
     color:transparent;
     -webkit-text-stroke: 5px white;
+    text-align: center;
 }
 
 .project-overview
@@ -215,4 +216,10 @@ body::-webkit-scrollbar {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.pryze-img
+{
+    width:auto;
+    height:1005;
 }

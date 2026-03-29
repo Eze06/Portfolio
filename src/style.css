@@ -484,7 +484,7 @@ body::-webkit-scrollbar {
 
 .project-grid
 {
-  width: 25vw;
+  width: 90%;
   aspect-ratio: 3/2;
   display:grid;
   grid-template-columns: repeat(3, 1fr);
