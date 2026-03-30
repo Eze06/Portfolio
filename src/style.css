@@ -365,8 +365,7 @@ body::-webkit-scrollbar {
   display:flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
-    
+  align-items: flex-start;    
 } 
 
 .about-me h1
@@ -791,24 +790,89 @@ body::-webkit-scrollbar {
   -webkit-text-stroke: 2px black;
 }
 
-.description-headers
-{
-  transform-origin: 50% 50%;
-  transform: rotateZ(90deg);
-
-  height:100%;
-  width:10%;
-  display:flex;
-  gap:20px;
+.description-content {
+  position: relative;
+  width: 60%;
+  height: 100%;
+  text-align: justify;
 }
 
-.description-headers h1
+.description-headers {
+  pointer-events: all;
+  position: absolute;
+  top: 50%;
+  left: 85%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  align-items: center;
+}
+
+.description-headers h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  z-index:2;
+}
+
+
+.description-about
+{
+  top:10%;
+  position: absolute;
+  color:white;
+}
+
+.description-skills
+{
+  pointer-events: none;
+  position: absolute;
+  opacity: 0;
+}
+
+.description-skills img
+{
+  transform-origin: 50% 50%;
+  height:100%;
+  width:100%;
+  transform: scale(1.3);
+  object-fit: cover;
+}
+
+.about-header-btn
+{
+  color:#34D399;
+}
+
+.skills-header-btn
+{
+  color:white;
+}
+
+.showreel-header-btn
 {
   color: white;
 }
 
-.description-content
+.description-showreel {
+  position: absolute;
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 16 / 9;
+  top:15%;
+  opacity: 0;
+}
+
+.description-showreel iframe 
 {
-  height:100%;
-  width:70%;
+
+  pointer-events: all;
+  width: 100%;
+  height: 100%;
+  border: none;
+  z-index:2;
+  
 }

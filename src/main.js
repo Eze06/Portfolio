@@ -8,6 +8,7 @@ import CircleType from "circletype";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const VinylPage = document.querySelector(".vinyl-page");
 const VinylElem = document.querySelector(".vinyl");
 const VinylFrontElem = document.querySelector(".vinyl-front");
 const VinylBackElem = document.querySelector(".vinyl-back");
@@ -29,6 +30,15 @@ const ProjectTitleBack = document.querySelectorAll(".project-section-title-back"
 const ProjectScroller = document.querySelector(".project-scroller");
 const ProjectSectionImage = document.querySelectorAll(".project-section-image img");
 const ProjectSectionImageDiv = document.querySelectorAll(".project-section-image");
+
+const AboutHeaderButton = document.querySelector(".about-header-btn");
+const SkillsHeaderButton  = document.querySelector(".skills-header-btn");
+const ShowreelHeaderButton = document.querySelector(".showreel-header-btn");
+
+const AboutDescription = document.querySelector(".description-about");
+const SkillsDescription = document.querySelector(".description-skills");
+const ShowreelDescription = document.querySelector('.description-showreel');
+
 
 const ProjectNames = ["cardiva", "engarde", "konranbou", "xpofolio", "verdant", "pryze", "requiem", "solar-system"];
 
@@ -237,7 +247,8 @@ function OpenHomePage() {
     defaults: { overwrite: "auto" },
     onComplete: () => {
       gsap.set(VinylElem, { pointerEvents: "all" });
-      
+      gsap.set(VinylPage, { pointerEvents: "none" });
+
       bOpeningHomePage = false
       bAnimationPlaying = false;
 
@@ -349,6 +360,7 @@ function OpenAboutMePage()
   CloseVinyl(false);
 
   gsap.set(VinylElem, { pointerEvents: "none" });
+  gsap.set(VinylPage, { pointerEvents: "none" });
   gsap.to(TitleElem, { opacity: 0, duration: 0.25, overwrite: "auto" });
   gsap.to(VinylButtonParent, { opacity: 0, zIndex: -1, duration: 0.25, overwrite: "auto" });
 
@@ -366,7 +378,7 @@ function OpenAboutMePage()
   });
 
   tl.to(VinylElem, { opacity: 0, pointerEvents: "none", duration: 2 });
-  tl.to(AboutMePage, { opacity: 1, duration: 2 }, "< 1");
+  tl.to(AboutMePage, { opacity: 1, pointerEvents:"all",duration: 2 }, "< 1");
 
   
 }
@@ -612,7 +624,100 @@ var discRotationSpeed = 0.5;
 var vinylTextRotationSpeed = 0.1;
 var vinylTextRotation = 0;
 
+var CanUseDescriptionBtns = true;
+var AboutShown = true;
+var SkillsShown = false;
+var ShowReelShown = false;
 
+function ShowAbout()
+{
+
+  if (!CanUseDescriptionBtns || AboutShown) return;
+
+  SkillsShown = false;
+  ShowReelShown = false;
+  AboutShown = true;
+
+  CanUseDescriptionBtns = false;
+
+  const tl = gsap.timeline({
+
+    defaults: { overwrite: "auto" },
+
+    onComplete: () => {
+      CanUseDescriptionBtns = true;
+    }
+
+  });
+
+  gsap.set(SkillsHeaderButton, { color: "white" });
+  gsap.set(ShowreelHeaderButton, { color: "white" });
+  gsap.set(AboutHeaderButton, { color: "#34D399" });
+
+  tl.to(ShowreelDescription, { opacity: 0, duration: 0.5 })
+    .to(SkillsDescription, { opacity: 0, duration: 0.5 }, "<")
+    .to(AboutDescription, { opacity: 1, duration: 0.5 })
+
+}
+
+function ShowSkills()
+{
+  if (!CanUseDescriptionBtns || SkillsShown) return;
+
+  AboutShown = false;
+  ShowReelShown = false;
+  SkillsShown = true;
+
+  CanUseDescriptionBtns = false;
+
+  const tl = gsap.timeline({
+
+    defaults: { overwrite: "auto" },
+
+    onComplete: () => {
+      CanUseDescriptionBtns = true;
+    }
+
+  });
+
+  gsap.set(ShowreelHeaderButton, { color: "white" });
+  gsap.set(AboutHeaderButton, { color: "white" });
+  gsap.set(SkillsHeaderButton, { color: "#34D399" });
+
+
+  tl.to(ShowreelDescription, { opacity: 0, duration: 0.5 })
+    .to(AboutDescription, { opacity: 0, duration: 0.5 }, "<")
+    .to(SkillsDescription, { opacity: 1, duration: 0.5 })
+}
+
+function ShowShowreel()
+{
+  if (!CanUseDescriptionBtns || ShowReelShown) return;
+
+  AboutShown = false;
+  SkillsShown = false;
+  ShowReelShown = true;
+
+  CanUseDescriptionBtns = false;
+
+  const tl = gsap.timeline({
+
+    defaults: { overwrite: "auto" },
+
+    onComplete: () => {
+      CanUseDescriptionBtns = true;
+    }
+
+  });
+
+  gsap.set(SkillsHeaderButton, { color: "white" });
+  gsap.set(AboutHeaderButton, { color: "white" });
+  gsap.set(ShowreelHeaderButton, { color: "#34D399" });
+
+  tl.to(AboutDescription, { opacity: 0, duration: 0.5 })
+    .to(SkillsDescription, { opacity: 0, duration: 0.5 }, "<")
+    .to(ShowreelDescription, { opacity: 1, duration: 0.5 })
+}
 
 function animate() {
   requestAnimationFrame(animate);
@@ -663,6 +768,10 @@ ProjectHeader.addEventListener('click', OpenProjectPage);
 NavBar.addEventListener('click', OpenHomePage);
 
 ProjectPage.addEventListener('wheel', HandleProjectWheel, { passive: false });
+
+AboutHeaderButton.addEventListener('click', ShowAbout);
+SkillsHeaderButton.addEventListener('click', ShowSkills);
+ShowreelHeaderButton.addEventListener('click', ShowShowreel);
 
 const projectHandlers = [];
 
