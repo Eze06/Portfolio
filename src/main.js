@@ -40,7 +40,7 @@ const SkillsDescription = document.querySelector(".description-skills");
 const ShowreelDescription = document.querySelector('.description-showreel');
 
 
-const ProjectNames = ["cardiva", "engarde", "konranbou", "xpofolio", "verdant", "pryze", "requiem", "solar-system"];
+const ProjectNames = ["cardiva", "engarde", "konranbou", "xpofolio", "verdant", "pryze", "requiem", "solarsystem"];
 
 
 //Project Scroller Variables
@@ -258,8 +258,8 @@ function OpenHomePage() {
   });
 
   //Close About Page
-  tl.to(AboutMePage, { opacity: 0, ease: "power2.out", duration: 1 })
-  tl.to(ProjectPage, {opacity:0, pointerEvents:'none', ease:"power2.out", duration:1}, "<")
+  tl.to(AboutMePage, { opacity: 0, ease: "power2.out", pointerEvents: "none", duration: 1 })
+  tl.to(ProjectPage, { opacity: 0, pointerEvents: 'none', ease: "power2.out", duration: 1 }, "<")
   //Open Home Page
   
 
@@ -510,9 +510,9 @@ function OpenProject(ProjectIndex)
     defaults: { overwrite: "auto" },
 
     onComplete: () => {
-      window.location.href = `projects/${ProjectName}.html`;
+      window.location.href = `./${ProjectName}/`;
     }
-
+    //Change to force test
   });
 
   tl.to(
